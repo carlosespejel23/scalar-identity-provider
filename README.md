@@ -1,5 +1,7 @@
 <img src="src/main/resources/static/img/scalar_docs.jpg">
 
+![Static Badge](https://img.shields.io/badge/In%20Development%20Phase-8A2BE2)
+
 # Scalar Identity Provider
 
 This is a Identity Provider (IdP) for **Scalar** (project documentation at [Scalar Documentation](SCALAR_DOCS.md)). This IdP implements a signup and login flow using JWT (JSON Web Tokens) for authentication services and multitenancy features. It connects to a MongoDB database to manage user roles, user data and tenants.
