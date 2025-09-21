@@ -1,6 +1,8 @@
+<img src="src/main/resources/static/img/scalar_docs.jpg">
+
 # Scalar Identity Provider
 
-This is a Identity Provider (IdP) for **Scalar** (project documentation at `SCALAR_DOCS.md`). This IdP implements a signup and login flow using JWT (JSON Web Tokens) for authentication services and multitenancy features. It connects to a MongoDB database to manage user roles, user data and tenants.
+This is a Identity Provider (IdP) for **Scalar** (project documentation at [Scalar Documentation](SCALAR_DOCS.md)). This IdP implements a signup and login flow using JWT (JSON Web Tokens) for authentication services and multitenancy features. It connects to a MongoDB database to manage user roles, user data and tenants.
 
 ## List of Contents
 - [Features](#features)
