@@ -1,12 +1,13 @@
 package com.scalar.identityProvider.config;
 
 import com.scalar.identityProvider.services.GlobalRoleService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 /**
- * Componente para inicializar los roles globales al arrancar la aplicación.
+ * Component to initialize global roles when starting the application.
  */
 @Component
 public class GlobalRoleInitializer implements CommandLineRunner {
@@ -16,8 +17,7 @@ public class GlobalRoleInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Inicializar roles globales al arrancar la aplicación
         globalRoleService.initializeGlobalRoles();
-        System.out.println("✅ Roles globales inicializados correctamente");
+        IO.println("Global roles initialized successfully");
     }
 }

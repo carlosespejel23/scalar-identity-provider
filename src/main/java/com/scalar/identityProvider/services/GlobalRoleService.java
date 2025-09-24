@@ -3,6 +3,7 @@ package com.scalar.identityProvider.services;
 import com.scalar.identityProvider.models.EmployeeRole;
 import com.scalar.identityProvider.models.GlobalRole;
 import com.scalar.identityProvider.repository.GlobalRoleRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Servicio para manejar operaciones relacionadas con roles globales.
+ * Service for managing operations related to global roles.
  */
 @Service
 public class GlobalRoleService {
@@ -20,7 +21,7 @@ public class GlobalRoleService {
     private GlobalRoleRepository globalRoleRepository;
 
     /**
-     * Inicializa todos los roles globales del sistema.
+     * Initialize all global system roles.
      */
     public void initializeGlobalRoles() {
         List<EmployeeRole> rolesToCreate = Arrays.asList(
@@ -40,19 +41,19 @@ public class GlobalRoleService {
     }
 
     /**
-     * Obtiene un rol global por su nombre.
+     * Get a global role by name.
      *
-     * @param roleName El nombre del rol.
-     * @return Un Optional que contiene el rol si se encuentra.
+     * @param roleName The name of the role.
+     * @return An Optional containing the role if found.
      */
     public Optional<GlobalRole> findByName(EmployeeRole roleName) {
         return globalRoleRepository.findByName(roleName);
     }
 
     /**
-     * Obtiene todos los roles globales activos.
+     * Get all active global roles.
      *
-     * @return Lista de todos los roles globales activos.
+     * @return List of all active global roles.
      */
     public List<GlobalRole> findAllActiveRoles() {
         return globalRoleRepository.findAll().stream()
@@ -61,23 +62,23 @@ public class GlobalRoleService {
     }
 
     /**
-     * Obtiene la descripción de un rol.
+     * Get the description of a role.
      *
-     * @param roleName El nombre del rol.
-     * @return La descripción del rol.
+     * @param roleName The name of the role.
+     * @return The role description.
      */
     private String getRoleDescription(EmployeeRole roleName) {
         switch (roleName) {
             case ROLE_USER:
-                return "Usuario básico con permisos limitados";
+                return "Basic user with limited permissions";
             case ROLE_MODERATOR:
-                return "Moderador con permisos de gestión de contenido";
+                return "Moderator with content management permissions";
             case ROLE_ADMIN:
-                return "Administrador con permisos completos en su tenant";
+                return "Administrator with full permissions in your tenant";
             case ROLE_SUPER_ADMIN:
-                return "Super administrador con permisos globales del sistema";
+                return "Super administrator with global system permissions";
             default:
-                return "Rol del sistema";
+                return "System role";
         }
     }
 }
