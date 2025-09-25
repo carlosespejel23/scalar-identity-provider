@@ -1,106 +1,147 @@
 package com.scalar.identityProvider.models;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-// import lombok.Getter;
-// import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
+
 @Document(collection = "users")
 public class User {
+
+  /*
+   * Unique identifier for the user
+   */
   @Id
+  @Getter
+  @Setter
   private String id;
 
+  /*
+   * Username of the user
+   */
   @NotBlank
   @Size(max = 20)
+  @Getter
+  @Setter
   private String username;
 
+  /*
+   * First name of the user
+   */
+  @NotBlank
+  @Size(max = 50)
+  @Getter
+  @Setter
+  private String firstName;
+
+  /*
+   * Last name of the user
+   */
+  @NotBlank
+  @Size(max = 50)
+  @Getter
+  @Setter
+  private String lastName;
+
+  /*
+   * Email of the user
+   */
   @NotBlank
   @Size(max = 50)
   @Email
+  @Getter
+  @Setter
   private String email;
 
+  /*
+   * Password of the user
+   */
   @NotBlank
   @Size(max = 120)
+  @Getter
+  @Setter
   private String password;
 
+  /*
+   * Tenant ID the user belongs to
+   */
   @NotBlank
   @Size(max = 50)
+  @Getter
+  @Setter
   private String tenantId;
 
-  // Los roles ahora se manejan a través de UserTenantRole
-  // Este campo se mantiene para compatibilidad pero no se usa
+  /*
+   * Roles assigned to the user
+   * Roles are managed through UserTenantRole.
+   */
   @DBRef
+  @Getter
+  @Setter
   private Set<Role> roles = new HashSet<>();
 
+  /*
+   * Profile picture URL of the user
+   */
+  @Size(max = 200)
+  @Getter
+  @Setter
+  private String profilePictureUrl;
+
+  /*
+   * Status of the user (active/inactive)
+   */
+  @Getter
+  @Setter
+  private boolean active = true;
+
+  /*
+   * Date when the user was created
+   */
+  @Getter
+  @Setter
+  private String createdAt;
+
+  /*
+   * Date when the user was last updated
+   */
+  @Getter
+  @Setter
+  private String updatedAt;
+
+
+  /*
+   * Default constructor
+   */
   public User() {
   }
 
-  public User(String username, String email, String password) {
+  /*
+   * Parameterized constructors
+   */
+  public User(String username, String firstName, String lastName, String email, String password) {
     this.username = username;
+    this.firstName = firstName;
+    this.lastName = lastName;
     this.email = email;
     this.password = password;
   }
 
-  public User(String username, String email, String password, String tenantId) {
+  public User(String username, String firstName, String lastName, String email, String password, String tenantId) {
     this.username = username;
+    this.firstName = firstName;
+    this.lastName = lastName;
     this.email = email;
     this.password = password;
-    this.tenantId = tenantId;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public Set<Role> getRoles() {
-    return roles;
-  }
-
-  public void setRoles(Set<Role> roles) {
-    this.roles = roles;
-  }
-
-  public String getTenantId() {
-    return tenantId;
-  }
-
-  public void setTenantId(String tenantId) {
     this.tenantId = tenantId;
   }
 }

@@ -49,8 +49,7 @@ public class TenantController {
         // Crear el nuevo tenant
         Tenant tenant = new Tenant(
                 tenantRequest.getName(),
-                tenantRequest.getTenantId(),
-                tenantRequest.getDescription()
+                tenantRequest.getTenantId()
         );
 
         tenantService.createTenant(tenant);

@@ -6,6 +6,7 @@ import com.scalar.identityProvider.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +35,9 @@ public class RoleInitializationService {
             // Verificar si el rol ya existe para este tenant
             if (!roleRepository.findByNameAndTenantId(roleName, tenantId).isPresent()) {
                 Role role = new Role(roleName, tenantId);
+                String now = Instant.now().toString();
+                role.setCreatedAt(now);
+                role.setUpdatedAt(now);
                 roleRepository.save(role);
             }
         }

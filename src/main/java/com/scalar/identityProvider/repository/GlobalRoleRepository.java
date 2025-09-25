@@ -21,7 +21,7 @@ public interface GlobalRoleRepository extends MongoRepository<GlobalRole, String
     Optional<GlobalRole> findByName(EmployeeRole name);
 
     /**
-     * Verifica si un rol global existe por su nombre.
+     * Check if a global role exists by its name.
      *
      * @param name The name of the role.
      * @return true if it exists, false otherwise.

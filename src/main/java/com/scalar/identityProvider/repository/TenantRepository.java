@@ -1,36 +1,37 @@
 package com.scalar.identityProvider.repository;
 
 import com.scalar.identityProvider.models.Tenant;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
 /**
- * Repositorio para operaciones de base de datos relacionadas con Tenant.
+ * Repository for database operations related to Tenant.
  */
 public interface TenantRepository extends MongoRepository<Tenant, String> {
 
     /**
-     * Busca un tenant por su tenantId.
+     * Search for a tenant by its tenantId.
      *
-     * @param tenantId El ID del tenant.
-     * @return Un Optional que contiene el Tenant si se encuentra, o vacío si no se encuentra.
+     * @param tenantId Tenant ID.
+     * @return An Optional containing the Tenant if found, or empty if not found.
      */
     Optional<Tenant> findByTenantId(String tenantId);
 
     /**
-     * Verifica si un tenantId ya existe en la base de datos.
+     * Check if a tenantId already exists in the database.
      *
-     * @param tenantId El tenantId a verificar.
-     * @return Un Boolean que indica si el tenantId existe (true) o no (false).
+     * @param tenantId The tenantId to verify.
+     * @return A Boolean indicating whether the tenantId exists (true) or not (false).
      */
     Boolean existsByTenantId(String tenantId);
 
     /**
-     * Verifica si un nombre de tenant ya existe en la base de datos.
+     * Check if a tenant name already exists in the database.
      *
-     * @param name El nombre del tenant a verificar.
-     * @return Un Boolean que indica si el nombre existe (true) o no (false).
+     * @param name The name of the tenant to be verified.
+     * @return A Boolean indicating whether the name exists (true) or not (false).
      */
     Boolean existsByName(String name);
 }

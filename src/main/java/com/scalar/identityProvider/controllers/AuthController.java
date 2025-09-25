@@ -143,7 +143,7 @@ public class AuthController {
 		}
 
 		// Crear el nuevo tenant
-		Tenant tenant = new Tenant(signUpRequest.getTenantName(), tenantId, "Tenant creado automáticamente");
+		Tenant tenant = new Tenant(signUpRequest.getTenantName(), tenantId);
 		tenant = tenantService.createTenant(tenant);
 
 		// Inicializar roles para el nuevo tenant
@@ -168,10 +168,14 @@ public class AuthController {
 			}
 
 			// Create a new user's account - Solo admin en signup
-			User user = new User(signUpRequest.getUsername(),
-					signUpRequest.getEmail(),
-					encoder.encode(signUpRequest.getPassword()),
-					tenantId);
+			User user = new User(
+				signUpRequest.getUsername(),
+				signUpRequest.getFirstName(),
+				signUpRequest.getLastName(),
+				signUpRequest.getEmail(),
+				encoder.encode(signUpRequest.getPassword()),
+				tenantId
+			);
 
 			// En signup, el usuario siempre es admin del tenant
 			Set<Role> roles = new HashSet<>();

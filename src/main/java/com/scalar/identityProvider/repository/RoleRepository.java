@@ -1,10 +1,11 @@
 package com.scalar.identityProvider.repository;
 
-import java.util.Optional; // Import Optional for handling optional values
+import com.scalar.identityProvider.models.EmployeeRole;
+import com.scalar.identityProvider.models.Role;
 
-import com.scalar.identityProvider.models.EmployeeRole; // Import EmployeeRole enumeration
-import com.scalar.identityProvider.models.Role; // Import Role model
-import org.springframework.data.mongodb.repository.MongoRepository; // Import MongoRepository for MongoDB operations
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.Optional;
 
 /**
  * Repository interface for accessing Role entities in the MongoDB database.

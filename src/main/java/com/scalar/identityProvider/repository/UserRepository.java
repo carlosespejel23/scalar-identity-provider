@@ -1,10 +1,11 @@
 package com.scalar.identityProvider.repository;
 
-import java.util.List; // Import List for handling collections
-import java.util.Optional; // Import Optional for handling optional values
+import com.scalar.identityProvider.models.User;
 
-import com.scalar.identityProvider.models.User; // Import User model
-import org.springframework.data.mongodb.repository.MongoRepository; // Import MongoRepository for MongoDB operations
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for accessing User entities in the MongoDB database.
