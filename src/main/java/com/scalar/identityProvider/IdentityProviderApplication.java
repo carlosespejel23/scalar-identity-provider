@@ -21,7 +21,7 @@ public class IdentityProviderApplication {
 			dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue())); // Set as system properties
 			System.setProperty("DOTENV_LOADED", "true");
 
-			System.out.println("✅ Environment variables loaded from .env file");
+			IO.println("Environment variables loaded from .env file");
 		}
 	}
 

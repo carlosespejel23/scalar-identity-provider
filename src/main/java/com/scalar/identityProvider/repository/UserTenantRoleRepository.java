@@ -1,47 +1,48 @@
 package com.scalar.identityProvider.repository;
 
 import com.scalar.identityProvider.models.UserTenantRole;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Repositorio para operaciones de base de datos relacionadas con UserTenantRole.
+ * Repository for database operations related to UserTenantRole.
  */
 public interface UserTenantRoleRepository extends MongoRepository<UserTenantRole, String> {
 
     /**
-     * Busca la asignación de roles de un usuario en un tenant específico.
+     * Search for a user's role assignment in a specific tenant.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
-     * @return Un Optional que contiene la asignación si se encuentra.
+     * @param userId User ID.
+     * @param tenantId Tenant ID.
+     * @return An Optional containing the assignment if found.
      */
     Optional<UserTenantRole> findByUserIdAndTenantId(String userId, String tenantId);
 
     /**
-     * Busca todas las asignaciones de roles de un usuario.
+     * Search for all role assignments for a user.
      *
-     * @param userId El ID del usuario.
-     * @return Lista de asignaciones de roles del usuario.
+     * @param userId User ID.
+     * @return List of user role assignments.
      */
     List<UserTenantRole> findByUserId(String userId);
 
     /**
-     * Busca todas las asignaciones de roles en un tenant específico.
+     * Search for all role assignments in a specific tenant.
      *
-     * @param tenantId El ID del tenant.
-     * @return Lista de asignaciones de roles en el tenant.
+     * @param tenantId Tenant ID.
+     * @return List of role assignments in the tenant.
      */
     List<UserTenantRole> findByTenantId(String tenantId);
 
     /**
-     * Verifica si un usuario tiene roles asignados en un tenant.
+     * Check if a user has roles assigned in a tenant.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
-     * @return true si tiene roles asignados, false en caso contrario.
+     * @param userId User ID.
+     * @param tenantId Tenant ID.
+     * @return true if roles are assigned, false otherwise.
      */
     boolean existsByUserIdAndTenantId(String userId, String tenantId);
 }

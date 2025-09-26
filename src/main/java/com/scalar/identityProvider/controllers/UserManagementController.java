@@ -66,10 +66,14 @@ public class UserManagementController {
         }
 
         // Create a new user's account
-        User user = new User(createUserRequest.getUsername(),
-                createUserRequest.getEmail(),
-                encoder.encode(createUserRequest.getPassword()),
-                tenantId);
+        User user = new User(
+            createUserRequest.getUsername(),
+            createUserRequest.getFirstName(),
+            createUserRequest.getLastName(),
+            createUserRequest.getEmail(),
+            encoder.encode(createUserRequest.getPassword()),
+            tenantId
+        );
 
         Set<String> strRoles = createUserRequest.getRoles();
         Set<Role> roles = new HashSet<>();

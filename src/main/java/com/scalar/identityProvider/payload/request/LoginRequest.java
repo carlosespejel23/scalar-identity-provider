@@ -2,37 +2,35 @@ package com.scalar.identityProvider.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
 
+import lombok.Getter;
+import lombok.Setter;
+
+/*
+ * Request payload for user login
+ */
 public class LoginRequest {
+
+	/*
+     * Username of the user
+     */
 	@NotBlank
+	@Getter
+    @Setter
 	private String username;
 
+	/*
+	 * Password of the user
+	 */
 	@NotBlank
+	@Getter
+    @Setter
 	private String password;
 
+	/*
+	 * Tenant ID for the login context
+	 */
 	@NotBlank
+	@Getter
+    @Setter
 	private String tenantId;
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
 }
