@@ -2,55 +2,73 @@ package com.scalar.identityProvider.services;
 
 import com.scalar.identityProvider.models.Tenant;
 import com.scalar.identityProvider.repository.TenantRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+
 /**
- * Servicio para manejar operaciones relacionadas con tenants.
+ * Service for managing tenant-related operations.
  */
 @Service
 public class TenantService {
 
-    @Autowired
+    /*
+     * Dependencies
+     */
     private TenantRepository tenantRepository;
 
     /**
-     * Crea un nuevo tenant.
+     * Constructor for TenantService.
      *
-     * @param tenant El tenant a crear.
-     * @return El tenant creado.
+     * @param tenantRepository The repository for tenant operations.
      */
+    public TenantService(TenantRepository tenantRepository) {
+        this.tenantRepository = tenantRepository;
+    }
+
+
+    /**
+     * Create a new tenant.
+     *
+     * @param tenant Tenant to create.
+     * @return Tenant created.
+     */
+    @Transactional
     public Tenant createTenant(Tenant tenant) {
         return tenantRepository.save(tenant);
     }
 
+
     /**
-     * Busca un tenant por su ID.
+     * Search for a tenant by ID.
      *
-     * @param id El ID del tenant.
-     * @return Un Optional que contiene el tenant si se encuentra.
+     * @param id Tenant ID.
+     * @return An Optional containing the tenant if found.
      */
     public Optional<Tenant> findById(String id) {
         return tenantRepository.findById(id);
     }
 
+
     /**
-     * Busca un tenant por su tenantId.
+     * Search for a tenant by its tenantId.
      *
-     * @param tenantId El tenantId del tenant.
-     * @return Un Optional que contiene el tenant si se encuentra.
+     * @param tenantId The tenantId of the tenant.
+     * @return An Optional containing the tenant if found.
      */
     public Optional<Tenant> findByTenantId(String tenantId) {
         return tenantRepository.findByTenantId(tenantId);
     }
 
+
     /**
-     * Obtiene todos los tenants activos.
+     * Get all active tenants.
      *
-     * @return Lista de todos los tenants activos.
+     * @return List of all active tenants.
      */
     public List<Tenant> findAllActiveTenants() {
         return tenantRepository.findAll().stream()
@@ -58,40 +76,87 @@ public class TenantService {
                 .toList();
     }
 
+
     /**
-     * Verifica si un tenantId ya existe.
+     * Check if a tenantId already exists.
      *
-     * @param tenantId El tenantId a verificar.
-     * @return true si existe, false en caso contrario.
+     * @param tenantId The tenantId to verify.
+     * @return true if it exists, false otherwise.
      */
     public boolean existsByTenantId(String tenantId) {
         return tenantRepository.existsByTenantId(tenantId);
     }
 
+
     /**
-     * Verifica si un nombre de tenant ya existe.
+     * Check if a tenant name already exists.
      *
-     * @param name El nombre a verificar.
-     * @return true si existe, false en caso contrario.
+     * @param name The name to be verified.
+     * @return true if it exists, false otherwise.
      */
     public boolean existsByName(String name) {
         return tenantRepository.existsByName(name);
     }
 
+
     /**
-     * Actualiza un tenant.
+     * Update a tenant.
      *
-     * @param tenant El tenant a actualizar.
-     * @return El tenant actualizado.
+     * @param tenant The tenant to be updated.
+     * @return The updated tenant.
      */
+    @Transactional
     public Tenant updateTenant(Tenant tenant) {
         return tenantRepository.save(tenant);
     }
 
+
     /**
-     * Elimina un tenant por su ID.
+     * Deactivate a tenant by its ID.
+     * 
+     * @param id The ID of the tenant to be deactivated.
+     * @return The deactivated tenant.
+     */
+    @Transactional
+    public Optional<Tenant> deactivateTenant(String id) {
+        Optional<Tenant> tenantOpt = tenantRepository.findById(id);
+        if (tenantOpt.isPresent()) {
+            Tenant tenant = tenantOpt.get();
+            tenant.setActive(false);
+            tenant.setUpdatedAt(java.time.Instant.now().toString());
+            tenantRepository.save(tenant);
+            return Optional.of(tenant);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
+    /**
+     * Reactivate a tenant by its ID.
+     * 
+     * @param id
+     * @return The reactivated tenant.
+     */
+    @Transactional
+    public Optional<Tenant> reactivateTenant(String id) {
+        Optional<Tenant> tenantOpt = tenantRepository.findById(id);
+        if (tenantOpt.isPresent()) {
+            Tenant tenant = tenantOpt.get();
+            tenant.setActive(true);
+            tenant.setUpdatedAt(java.time.Instant.now().toString());
+            tenantRepository.save(tenant);
+            return Optional.of(tenant);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
+    /**
+     * Delete a tenant by its ID.
      *
-     * @param id El ID del tenant a eliminar.
+     * @param id The ID of the tenant to be deleted.
      */
     public void deleteTenant(String id) {
         tenantRepository.deleteById(id);

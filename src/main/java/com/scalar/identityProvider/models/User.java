@@ -5,11 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
 
-import java.util.HashSet;
-import java.util.Set;
+ 
 
 import lombok.Getter;
 import lombok.Setter;
@@ -58,6 +57,7 @@ public class User {
   @NotBlank
   @Size(max = 50)
   @Email
+  @Indexed(unique = true)
   @Getter
   @Setter
   private String email;
@@ -80,14 +80,7 @@ public class User {
   @Setter
   private String tenantId;
 
-  /*
-   * Roles assigned to the user
-   * Roles are managed through UserTenantRole.
-   */
-  @DBRef
-  @Getter
-  @Setter
-  private Set<Role> roles = new HashSet<>();
+  
 
   /*
    * Profile picture URL of the user
@@ -125,23 +118,26 @@ public class User {
   public User() {
   }
 
-  /*
+  /**
    * Parameterized constructors
+   * 
+   * @param username   The username of the user
+   * @param firstName  The first name of the user
+   * @param lastName   The last name of the user
+   * @param email      The email of the user
+   * @param password   The password of the user
+   * @param tenantId   The tenant ID the user belongs to
+   * @param createdAt  The date when the user was created
+   * @param updatedAt  The date when the user was last updated
    */
-  public User(String username, String firstName, String lastName, String email, String password) {
-    this.username = username;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.password = password;
-  }
-
-  public User(String username, String firstName, String lastName, String email, String password, String tenantId) {
+  public User(String username, String firstName, String lastName, String email, String password, String tenantId, String createdAt, String updatedAt) {
     this.username = username;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.password = password;
     this.tenantId = tenantId;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 }

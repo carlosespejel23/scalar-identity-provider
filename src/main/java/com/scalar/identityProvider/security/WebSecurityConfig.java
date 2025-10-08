@@ -1,22 +1,23 @@
 package com.scalar.identityProvider.security;
 
-import com.scalar.identityProvider.security.jwt.AuthEntryPointJwt; // Import for unauthorized access handler
-import com.scalar.identityProvider.security.jwt.AuthTokenFilter; // Import for JWT token filter
-import com.scalar.identityProvider.security.services.UserDetailsServiceImpl; // Import for user details service implementation
-import org.springframework.beans.factory.annotation.Autowired; // Import for dependency injection
-import org.springframework.context.annotation.Bean; // Import for Spring configuration
-import org.springframework.context.annotation.Configuration; // Import for configuration class
-import org.springframework.security.authentication.AuthenticationManager; // Import for authentication manager
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider; // Import for authentication provider
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration; // Import for authentication configuration
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity; // Import for method security
-import org.springframework.security.config.annotation.web.builders.HttpSecurity; // Import for HTTP security configuration
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer; // Import for HTTP security configuration
-import org.springframework.security.config.http.SessionCreationPolicy; // Import for session creation policies
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // Import for password encoding
-import org.springframework.security.crypto.password.PasswordEncoder; // Import for password encoder interface
-import org.springframework.security.web.SecurityFilterChain; // Import for security filter chain
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // Import for username/password authentication filter
+import com.scalar.identityProvider.security.jwt.AuthEntryPointJwt;
+import com.scalar.identityProvider.security.jwt.AuthTokenFilter;
+import com.scalar.identityProvider.security.services.UserDetailsServiceImpl;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 /**
  * Security configuration class to set up Spring Security.
@@ -25,11 +26,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity // Enables method-level security annotations
 public class WebSecurityConfig {
 
-  @Autowired
+  /*
+   * Dependencies
+   */
   UserDetailsServiceImpl userDetailsService; // Injects the user details service for authentication
 
-  @Autowired
   private AuthEntryPointJwt unauthorizedHandler; // Injects the entry point for unauthorized requests
+
+  /*
+   * Constructor
+   */
+  public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
+    this.userDetailsService = userDetailsService;
+    this.unauthorizedHandler = unauthorizedHandler;
+  }
+
 
   /**
    * Creates a bean for the authentication JWT token filter.
@@ -37,7 +48,7 @@ public class WebSecurityConfig {
    * @return AuthTokenFilter instance
    */
   @Bean
-  public AuthTokenFilter authenticationJwtTokenFilter() {
+  AuthTokenFilter authenticationJwtTokenFilter() {
     return new AuthTokenFilter(); // Returns a new instance of AuthTokenFilter
   }
 
@@ -47,7 +58,7 @@ public class WebSecurityConfig {
    * @return DaoAuthenticationProvider instance
    */
   @Bean
-  public DaoAuthenticationProvider authenticationProvider() {
+  DaoAuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService); // Create a new authentication provider
 
     authProvider.setPasswordEncoder(passwordEncoder()); // Set the password encoder
@@ -63,7 +74,7 @@ public class WebSecurityConfig {
    * @throws Exception if there is an error getting the authentication manager
    */
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+  AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
     return authConfig.getAuthenticationManager(); // Returns the authentication manager from the configuration
   }
 
@@ -73,7 +84,7 @@ public class WebSecurityConfig {
    * @return PasswordEncoder instance
    */
   @Bean
-  public PasswordEncoder passwordEncoder() {
+  PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder(); // Returns a new instance of BCryptPasswordEncoder
   }
 
@@ -85,7 +96,7 @@ public class WebSecurityConfig {
    * @throws Exception if there is an error configuring the security filter chain
    */
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     // Configure CSRF protection, exception handling, session management, and authorization
     http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
             .exceptionHandling(exception ->

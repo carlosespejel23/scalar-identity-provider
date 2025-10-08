@@ -50,8 +50,11 @@ public class UserTenantRole {
     public UserTenantRole() {
     }
 
-    /*
+    /**
      * Constructor with userId and tenantId
+     * 
+     * @param userId   The user ID
+     * @param tenantId The tenant ID
      */
     public UserTenantRole(String userId, String tenantId) {
         this.userId = userId;

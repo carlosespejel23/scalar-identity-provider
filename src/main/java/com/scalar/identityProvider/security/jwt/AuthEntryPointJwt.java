@@ -1,21 +1,22 @@
 package com.scalar.identityProvider.security.jwt;
 
-import java.io.IOException; // Import IOException for handling input/output exceptions
+import java.io.IOException;
 
-import jakarta.servlet.ServletException; // Import ServletException for servlet-related exceptions
-import jakarta.servlet.http.HttpServletRequest; // Import HttpServletRequest for handling HTTP requests
-import jakarta.servlet.http.HttpServletResponse; // Import HttpServletResponse for handling HTTP responses
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger; // Import Logger for logging errors and information
-import org.slf4j.LoggerFactory; // Import LoggerFactory for creating Logger instances
-import org.springframework.security.core.AuthenticationException; // Import AuthenticationException for authentication errors
-import org.springframework.security.web.AuthenticationEntryPoint; // Import AuthenticationEntryPoint for handling unauthorized access
-import org.springframework.stereotype.Component; // Import Component for Spring component scanning
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
 
 /**
  * Custom implementation of AuthenticationEntryPoint to handle unauthorized access.
  */
-@Component // Indicate that this class is a Spring component
+@Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class); // Logger for logging errors

@@ -6,8 +6,12 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-/*
+/**
  * Request payload for creating or updating a tenant
+ * 
+ * @param name        The name of the tenant
+ * @param tenantId    The unique identifier for the tenant
+ * @param description (optional) The description of the tenant
  */
 public class TenantRequest {
 
@@ -37,9 +41,20 @@ public class TenantRequest {
     @Setter
     private String description;
 
+
+    /*
+     * Default constructor
+     */
     public TenantRequest() {
     }
 
+    /**
+     * Parameterized constructor
+     * 
+     * @param name        the name of the tenant
+     * @param tenantId    the unique identifier for the tenant
+     * @param description the description of the tenant
+     */
     public TenantRequest(String name, String tenantId, String description) {
         this.name = name;
         this.tenantId = tenantId;

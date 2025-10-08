@@ -7,6 +7,7 @@ import com.scalar.identityProvider.payload.response.MessageResponse;
 import com.scalar.identityProvider.repository.UserRepository;
 import com.scalar.identityProvider.services.TenantService;
 import com.scalar.identityProvider.services.UserTenantRoleService;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,122 +18,117 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+
+/*
+ * Controller for managing users inside tenants.
+ * Only accessible by admins.
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/admin/tenant-users")
 public class UserTenantController {
 
-    @Autowired
+    /*
+     * Dependencies
+     */
     private UserRepository userRepository;
 
-    @Autowired
     private TenantService tenantService;
 
-    @Autowired
     private UserTenantRoleService userTenantRoleService;
 
+
+    /*
+     * Constructors
+     */
+    public UserTenantController() {}
+
+    @Autowired
+    public UserTenantController(
+        UserRepository userRepository,
+        TenantService tenantService,
+        UserTenantRoleService userTenantRoleService) {
+        this.userRepository = userRepository;
+        this.tenantService = tenantService;
+        this.userTenantRoleService = userTenantRoleService;
+    }
+
+
     /**
-     * Agregar un usuario existente a un tenant con roles específicos.
-     * Solo accesible para administradores.
+     * Add an existing user to a tenant with specific roles.
      *
-     * @param addUserRequest La petición para agregar usuario a tenant.
-     * @return ResponseEntity con el resultado de la operación.
+     * @param addUserRequest The request to add a user to the tenant.
+     * @return ResponseEntity with the result of the operation.
      */
     @PostMapping("/add-user")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> addUserToTenant(@Valid @RequestBody AddUserToTenantRequest addUserRequest) {
         
-        // Verificar que el tenant existe
+        // Verify that the tenant exists
         if (!tenantService.existsByTenantId(addUserRequest.getTenantId())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Tenant no encontrado!"));
+                    .body(new MessageResponse("error", "Tenant not found"));
         }
 
-        // Buscar el usuario por username
-        List<User> users = userRepository.findByUsername(addUserRequest.getUsername());
+        // Get user by email
+        List<User> users = userRepository.findByEmail(addUserRequest.getEmail());
         if (users.isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Usuario no encontrado!"));
+                    .body(new MessageResponse("error", "User not found"));
         }
-
-        // Si hay múltiples usuarios con el mismo username, tomar el primero
-        // En un sistema real, podrías querer ser más específico
         User user = users.get(0);
 
-        // Verificar si el usuario ya tiene roles en este tenant
+        // Check if the user already has roles in this tenant
         if (userTenantRoleService.getUserRolesInTenant(user.getId(), addUserRequest.getTenantId()).isPresent()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: El usuario ya tiene roles asignados en este tenant!"));
+                    .body(new MessageResponse("error", "The user already has roles assigned in this tenant."));
         }
 
-        // Asignar roles por defecto si no se especifican
+        // Assign default roles if not specified
         Set<String> roles = addUserRequest.getRoles();
         if (roles == null || roles.isEmpty()) {
             roles = Set.of("user");
         }
 
-        // Asignar roles al usuario en el tenant
+        // Assign roles to the user in the tenant
         userTenantRoleService.assignRolesToUser(user.getId(), addUserRequest.getTenantId(), roles);
 
-        return ResponseEntity.ok(new MessageResponse("Usuario agregado al tenant exitosamente!"));
+        return ResponseEntity.ok(new MessageResponse("success", "User successfully added to tenant"));
     }
 
+
     /**
-     * Obtener todos los usuarios de un tenant específico.
-     * Solo accesible para administradores.
+     * Get all users from a specific tenant.
      *
-     * @param tenantId El ID del tenant.
-     * @return ResponseEntity con la lista de usuarios del tenant.
+     * @param tenantId Tenant ID.
+     * @return ResponseEntity with the list of users in the tenant.
      */
     @GetMapping("/tenant/{tenantId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> getTenantUsers(@PathVariable String tenantId) {
         
-        // Verificar que el tenant existe
+        // Verify that the tenant exists
         if (!tenantService.existsByTenantId(tenantId)) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Tenant no encontrado!"));
+                    .body(new MessageResponse("error", "Tenant not found"));
         }
 
         List<UserTenantRole> tenantUsers = userTenantRoleService.getTenantUsers(tenantId);
         return ResponseEntity.ok(tenantUsers);
     }
 
-    /**
-     * Obtener todos los tenants de un usuario específico.
-     * Solo accesible para administradores.
-     *
-     * @param userId El ID del usuario.
-     * @return ResponseEntity con la lista de tenants del usuario.
-     */
-    @GetMapping("/user/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> getUserTenants(@PathVariable String userId) {
-        
-        // Verificar que el usuario existe
-        Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Usuario no encontrado!"));
-        }
-
-        List<UserTenantRole> userTenants = userTenantRoleService.getUserTenants(userId);
-        return ResponseEntity.ok(userTenants);
-    }
 
     /**
-     * Actualizar roles de un usuario en un tenant específico.
-     * Solo accesible para administradores.
+     * Update user roles in a specific tenant.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
-     * @param roles Los nuevos roles.
-     * @return ResponseEntity con el resultado de la operación.
+     * @param userId User ID.
+     * @param tenantId Tenant ID.
+     * @param roles New roles.
+     * @return ResponseEntity with the result of the operation.
      */
     @PutMapping("/user/{userId}/tenant/{tenantId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
@@ -141,39 +137,38 @@ public class UserTenantController {
             @PathVariable String tenantId,
             @RequestBody Set<String> roles) {
         
-        // Verificar que el usuario existe
+        // Verify that the user exists
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Usuario no encontrado!"));
+                    .body(new MessageResponse("error", "User not found"));
         }
 
-        // Verificar que el tenant existe
+        // Verify that the tenant exists
         if (!tenantService.existsByTenantId(tenantId)) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Tenant no encontrado!"));
+                    .body(new MessageResponse("error", "Tenant not found"));
         }
 
-        // Asignar roles por defecto si no se especifican
+        // Assign default roles if not specified
         if (roles == null || roles.isEmpty()) {
             roles = Set.of("user");
         }
 
-        // Actualizar roles del usuario en el tenant
+        // Update user roles in the tenant
         userTenantRoleService.assignRolesToUser(userId, tenantId, roles);
 
-        return ResponseEntity.ok(new MessageResponse("Roles del usuario actualizados exitosamente!"));
+        return ResponseEntity.ok(new MessageResponse("success", "User roles successfully updated"));
     }
 
     /**
-     * Remover un usuario de un tenant específico.
-     * Solo accesible para administradores.
+     * Remove a user from a specific tenant.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
-     * @return ResponseEntity con el resultado de la operación.
+     * @param userId User ID.
+     * @param tenantId Tenant ID.
+     * @return ResponseEntity with the result of the operation.
      */
     @DeleteMapping("/user/{userId}/tenant/{tenantId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
@@ -181,24 +176,24 @@ public class UserTenantController {
             @PathVariable String userId,
             @PathVariable String tenantId) {
         
-        // Verificar que el usuario existe
+        // Verify that the user exists
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Usuario no encontrado!"));
+                    .body(new MessageResponse("error", "User not found"));
         }
 
-        // Verificar que el tenant existe
+        // Verify that the tenant exists
         if (!tenantService.existsByTenantId(tenantId)) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Tenant no encontrado!"));
+                    .body(new MessageResponse("error", "Tenant not found"));
         }
 
-        // Remover usuario del tenant
+        // Remove user from tenant
         userTenantRoleService.removeUserFromTenant(userId, tenantId);
 
-        return ResponseEntity.ok(new MessageResponse("Usuario removido del tenant exitosamente!"));
+        return ResponseEntity.ok(new MessageResponse("success", "User successfully removed from tenant"));
     }
 }

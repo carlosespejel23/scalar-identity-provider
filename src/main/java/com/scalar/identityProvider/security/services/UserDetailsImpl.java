@@ -1,15 +1,14 @@
 package com.scalar.identityProvider.security.services;
 
-import java.util.Collection; // Import Collection for holding authorities
-import java.util.List; // Import List for storing roles
-import java.util.Objects; // Import Objects for object comparison
-import java.util.stream.Collectors; // Import Collectors for stream operations
+import com.scalar.identityProvider.models.User;
 
-import com.scalar.identityProvider.models.User; // Import User model
-import org.springframework.security.core.GrantedAuthority; // Import GrantedAuthority for user authorities
-import org.springframework.security.core.authority.SimpleGrantedAuthority; // Import SimpleGrantedAuthority for role representation
-import org.springframework.security.core.userdetails.UserDetails; // Import UserDetails for Spring Security
-import com.fasterxml.jackson.annotation.JsonIgnore; // Import JsonIgnore to prevent serialization of sensitive data
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.Collection;
+import java.util.Objects;
+
 
 /**
  * Implementation of Spring Security's UserDetails interface for representing user details.
@@ -17,31 +16,65 @@ import com.fasterxml.jackson.annotation.JsonIgnore; // Import JsonIgnore to prev
 public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L; // Serializable version identifier
 
-	private String id; // Unique identifier for the user
-	private String username; // Username of the user
-	private String email; // Email address of the user
+	private String id;
+	private String username;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private String tenantId;
 
 	@JsonIgnore // Prevent serialization of the password field
-	private String password; // Password of the user
+	private String password;
 
 	private Collection<? extends GrantedAuthority> authorities; // Collection of user's authorities (roles)
 
+	private String profilePictureUrl;
+	private boolean active;
+	private String createdAt;
+	private String updatedAt;
+
+	
 	/**
 	 * Constructor to initialize UserDetailsImpl.
 	 *
 	 * @param id           The unique identifier of the user.
 	 * @param username     The username of the user.
+	 * @param firstName    The first name of the user.
+	 * @param lastName     The last name of the user.
 	 * @param email        The email of the user.
+	 * @param tenantId     The tenant ID where the user belongs to
 	 * @param password     The password of the user.
 	 * @param authorities  The collection of user's authorities.
+	 * @param profilePictureUrl The URL of the user's profile picture.
+	 * @param active       The active status of the user.
+	 * @param createdAt    The creation timestamp of the user.
+	 * @param updatedAt    The last update timestamp of the user.
 	 */
-	public UserDetailsImpl(String id, String username, String email, String password,
-						   Collection<? extends GrantedAuthority> authorities) {
-		this.id = id; // Set user ID
-		this.username = username; // Set username
-		this.email = email; // Set email
-		this.password = password; // Set password
-		this.authorities = authorities; // Set authorities
+	public UserDetailsImpl(
+		String id, 
+		String username, 
+		String firstName, 
+		String lastName,
+		String email, 
+		String tenantId,
+		String password,
+		Collection<? extends GrantedAuthority> authorities,
+		String profilePictureUrl,
+		boolean active,
+		String createdAt,
+		String updatedAt) {
+		this.id = id;
+		this.username = username;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.tenantId = tenantId;
+		this.password = password;
+		this.authorities = authorities;
+		this.profilePictureUrl = profilePictureUrl;
+		this.active = active;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 
 	/**
@@ -50,20 +83,22 @@ public class UserDetailsImpl implements UserDetails {
 	 * @param user The User object.
 	 * @return A UserDetailsImpl instance.
 	 */
-	public static UserDetailsImpl build(User user) {
-		// Map the roles of the user to GrantedAuthority
-		List<GrantedAuthority> authorities = user.getRoles().stream()
-				.map(role -> new SimpleGrantedAuthority(role.getName().name())) // Convert each role to SimpleGrantedAuthority
-				.collect(Collectors.toList()); // Collect into a list
-
-		// Return a new UserDetailsImpl object
-		return new UserDetailsImpl(
-				user.getId(), // User ID
-				user.getUsername(), // Username
-				user.getEmail(), // Email
-				user.getPassword(), // Password
-				authorities); // User authorities
-	}
+    public static UserDetailsImpl build(User user, Collection<? extends GrantedAuthority> authorities) {
+        return new UserDetailsImpl(
+                user.getId(),
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getTenantId(),
+                user.getPassword(),
+                authorities,
+                user.getProfilePictureUrl(),
+                user.isActive(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+    }
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -78,6 +113,10 @@ public class UserDetailsImpl implements UserDetails {
 		return email; // Return email
 	}
 
+	public String getTenantId() {
+		return tenantId; // Return tenant ID
+	}
+
 	@Override
 	public String getPassword() {
 		return password; // Return password
@@ -86,6 +125,30 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public String getUsername() {
 		return username; // Return username
+	}
+
+	public String getFirstName() {
+		return firstName; // Return first name
+	}
+
+	public String getLastName() {
+		return lastName; // Return last name
+	}
+
+	public String getProfilePictureUrl() {
+		return profilePictureUrl; // Return profile picture URL
+	}
+
+	public boolean isActive() {
+		return active; // Return active status
+	}
+
+	public String getCreatedAt() {
+		return createdAt; // Return creation timestamp
+	}
+
+	public String getUpdatedAt() {
+		return updatedAt; // Return last update timestamp
 	}
 
 	@Override

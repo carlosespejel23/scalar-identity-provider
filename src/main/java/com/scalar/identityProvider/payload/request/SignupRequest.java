@@ -2,13 +2,18 @@ package com.scalar.identityProvider.payload.request;
 
 import jakarta.validation.constraints.*;
 
-import java.util.Set;
-
 import lombok.Getter;
 import lombok.Setter;
  
-/*
+/**
  * Request payload for user signup
+ * 
+ * @param username   The username of the user
+ * @param firstName  The first name of the user
+ * @param lastName   The last name of the user
+ * @param email      The email of the user
+ * @param password   The password of the user
+ * @param tenantName The name of the tenant the user belongs to
  */
 public class SignupRequest {
 
@@ -48,13 +53,6 @@ public class SignupRequest {
     @Getter
     @Setter
     private String email;
-    
-    /*
-     * Roles assigned to the user
-     */
-    @Getter
-    @Setter
-    private Set<String> roles;
     
     /*
      * Password of the user

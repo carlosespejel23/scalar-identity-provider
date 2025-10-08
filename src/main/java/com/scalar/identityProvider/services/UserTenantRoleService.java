@@ -4,34 +4,52 @@ import com.scalar.identityProvider.models.EmployeeRole;
 import com.scalar.identityProvider.models.GlobalRole;
 import com.scalar.identityProvider.models.UserTenantRole;
 import com.scalar.identityProvider.repository.UserTenantRoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+
 /**
- * Servicio para manejar operaciones relacionadas con roles de usuario por tenant.
+ * Service for managing operations related to user roles per tenant.
  */
 @Service
 public class UserTenantRoleService {
 
-    @Autowired
+    /*
+     * Dependencies
+     */
     private UserTenantRoleRepository userTenantRoleRepository;
 
-    @Autowired
     private GlobalRoleService globalRoleService;
 
     /**
-     * Asigna roles a un usuario en un tenant específico.
+     * Constructor for dependency injection.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
-     * @param roleNames Los nombres de los roles a asignar.
-     * @return La asignación de roles creada o actualizada.
+     * @param userTenantRoleRepository Repository for UserTenantRole entities.
+     * @param globalRoleService Service for managing global roles.
      */
+    public UserTenantRoleService(
+        UserTenantRoleRepository userTenantRoleRepository,
+        GlobalRoleService globalRoleService) {
+        this.userTenantRoleRepository = userTenantRoleRepository;
+        this.globalRoleService = globalRoleService;
+    }
+
+
+    /**
+     * Assign roles to a user in a specific tenant.
+     *
+     * @param userId The user ID.
+     * @param tenantId The tenant ID.
+     * @param roleNames The names of the roles to be assigned.
+     * @return The role assignment created or updated.
+     */
+    @Transactional
     public UserTenantRole assignRolesToUser(String userId, String tenantId, Set<String> roleNames) {
         Optional<UserTenantRole> existingAssignment = userTenantRoleRepository
                 .findByUserIdAndTenantId(userId, tenantId);
@@ -54,44 +72,48 @@ public class UserTenantRoleService {
         return userTenantRoleRepository.save(userTenantRole);
     }
 
+
     /**
-     * Obtiene los roles de un usuario en un tenant específico.
+     * Get the roles of a user in a specific tenant.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
-     * @return Un Optional que contiene la asignación de roles si existe.
+     * @param userId The user ID.
+     * @param tenantId The tenant ID.
+     * @return An Optional containing the role assignment, if it exists.
      */
     public Optional<UserTenantRole> getUserRolesInTenant(String userId, String tenantId) {
         return userTenantRoleRepository.findByUserIdAndTenantId(userId, tenantId);
     }
 
+
     /**
-     * Obtiene todos los tenants donde un usuario tiene roles asignados.
+     * Get all tenants where a user has assigned roles.
      *
-     * @param userId El ID del usuario.
-     * @return Lista de asignaciones de roles del usuario.
+     * @param userId The user ID.
+     * @return List of user role assignments.
      */
     public List<UserTenantRole> getUserTenants(String userId) {
         return userTenantRoleRepository.findByUserId(userId);
     }
 
+
     /**
-     * Obtiene todos los usuarios con roles en un tenant específico.
+     * Get all users with roles in a specific tenant.
      *
-     * @param tenantId El ID del tenant.
-     * @return Lista de asignaciones de roles en el tenant.
+     * @param tenantId The tenant ID.
+     * @return List of role assignments in the tenant.
      */
     public List<UserTenantRole> getTenantUsers(String tenantId) {
         return userTenantRoleRepository.findByTenantId(tenantId);
     }
 
+
     /**
-     * Verifica si un usuario tiene un rol específico en un tenant.
+     * Check if a user has a specific role in a tenant.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
-     * @param roleName El nombre del rol.
-     * @return true si el usuario tiene el rol, false en caso contrario.
+     * @param userId The user ID.
+     * @param tenantId The tenant ID.
+     * @param roleName The role name.
+     * @return true if the user has the role, false otherwise.
      */
     public boolean userHasRoleInTenant(String userId, String tenantId, EmployeeRole roleName) {
         Optional<UserTenantRole> userTenantRole = getUserRolesInTenant(userId, tenantId);
@@ -102,11 +124,12 @@ public class UserTenantRoleService {
         return false;
     }
 
+
     /**
-     * Elimina la asignación de roles de un usuario en un tenant.
+     * Remove a user's role assignment in a tenant.
      *
-     * @param userId El ID del usuario.
-     * @param tenantId El ID del tenant.
+     * @param userId The user ID.
+     * @param tenantId The tenant ID.
      */
     public void removeUserFromTenant(String userId, String tenantId) {
         Optional<UserTenantRole> userTenantRole = userTenantRoleRepository
@@ -114,11 +137,12 @@ public class UserTenantRoleService {
         userTenantRole.ifPresent(role -> userTenantRoleRepository.delete(role));
     }
 
+
     /**
-     * Mapea un string a un EmployeeRole.
+     * Maps a string to an EmployeeRole.
      *
-     * @param roleName El nombre del rol como string.
-     * @return El EmployeeRole correspondiente.
+     * @param roleName The role name as String.
+     * @return The corresponding EmployeeRole.
      */
     private EmployeeRole mapStringToEmployeeRole(String roleName) {
         switch (roleName.toLowerCase()) {

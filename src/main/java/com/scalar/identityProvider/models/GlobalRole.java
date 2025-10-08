@@ -2,12 +2,15 @@ package com.scalar.identityProvider.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
+import java.util.HashSet;
+import java.util.Set;
 
 @Document(collection = "global_roles")
 public class GlobalRole {
@@ -43,6 +46,14 @@ public class GlobalRole {
     @Setter
     private boolean active = true;
 
+    /*
+     * Permissions associated with this global role
+     */
+    @DBRef
+    @Getter
+    @Setter
+    private Set<Permission> permissions = new HashSet<>();
+
 
     /*
      * Default constructor
@@ -50,8 +61,11 @@ public class GlobalRole {
     public GlobalRole() {
     }
 
-    /*
+    /**
      * Parameterized constructor
+     * 
+     * @param name         Name of the global role
+     * @param description  Description of the global role
      */
     public GlobalRole(EmployeeRole name, String description) {
         this.name = name;

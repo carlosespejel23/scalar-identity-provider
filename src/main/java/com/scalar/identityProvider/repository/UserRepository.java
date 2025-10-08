@@ -22,6 +22,14 @@ public interface UserRepository extends MongoRepository<User, String> {
   List<User> findByUsername(String username);
 
   /**
+   * Find all Users by their email across all tenants.
+   *
+   * @param email The email of the user.
+   * @return A List containing all Users with that email.
+   */
+  List<User> findByEmail(String email);
+
+  /**
    * Check if a username already exists in the database.
    *
    * @param username The username to check.
@@ -71,4 +79,21 @@ public interface UserRepository extends MongoRepository<User, String> {
    * @return A List containing all Users in that tenant.
    */
   List<User> findByTenantId(String tenantId);
+
+  /**
+   * Check if a user is active in a specific tenant.
+   *
+   * @param username The username of the user.
+   * @param tenantId The tenant ID.
+   * @return A Boolean indicating whether the user is active (true) or not (false).
+   */
+  Boolean isUserActiveInTenant(String username, String tenantId);
+
+  /**
+   * Check if a user is active
+   * 
+   * @param username The username of the user.
+   * @return A Boolean indicating whether the user is active (true) or not (false).
+   */
+  Boolean isUserActive(String username);
 }

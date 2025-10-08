@@ -1,38 +1,52 @@
 package com.scalar.identityProvider.security.jwt;
 
-import java.io.IOException; // Import IOException for handling input/output exceptions
+import java.io.IOException;
 
-import jakarta.servlet.FilterChain; // Import FilterChain for handling filter chains
-import jakarta.servlet.ServletException; // Import ServletException for servlet-related exceptions
-import jakarta.servlet.http.HttpServletRequest; // Import HttpServletRequest for handling HTTP requests
-import jakarta.servlet.http.HttpServletResponse; // Import HttpServletResponse for handling HTTP responses
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger; // Import Logger for logging errors and information
-import org.slf4j.LoggerFactory; // Import LoggerFactory for creating Logger instances
-import org.springframework.beans.factory.annotation.Autowired; // Import Autowired for dependency injection
-import org.springframework.lang.NonNull; // Import NonNull for null safety
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken; // Import for creating authentication tokens
-import org.springframework.security.core.context.SecurityContextHolder; // Import for managing security context
-import org.springframework.security.core.userdetails.UserDetails; // Import for user details
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource; // Import for authentication details
-import org.springframework.util.StringUtils; // Import StringUtils for string utility methods
-import org.springframework.web.filter.OncePerRequestFilter; // Import OncePerRequestFilter to ensure the filter is applied once per request
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.scalar.identityProvider.security.services.UserDetailsServiceImpl; // Import custom user details service
-import com.scalar.identityProvider.security.TenantContext; // Import TenantContext for tenant management
+import com.scalar.identityProvider.security.services.UserDetailsServiceImpl;
+import com.scalar.identityProvider.security.TenantContext;
+
 
 /**
  * Filter to validate the JWT token and set user authentication in the security context.
  */
 public class AuthTokenFilter extends OncePerRequestFilter {
 
-  @Autowired // Automatically inject JwtUtils to handle JWT operations
+  /*
+   * Dependencies
+   */
   private JwtUtils jwtUtils;
 
-  @Autowired // Automatically inject UserDetailsServiceImpl to load user details
   private UserDetailsServiceImpl userDetailsService;
 
+  /*
+   * Constructor with dependencies injected
+   */
+  public AuthTokenFilter() {}
+
+  @Autowired
+  public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsServiceImpl userDetailsService) {
+    this.jwtUtils = jwtUtils;
+    this.userDetailsService = userDetailsService;
+  }
+
   private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class); // Logger for logging errors
+
 
   /**
    * Filter method to process the JWT token and set authentication.
@@ -85,6 +99,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
+  
   /**
    * Parse the JWT token from the Authorization header.
    *

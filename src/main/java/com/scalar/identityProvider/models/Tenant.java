@@ -82,11 +82,18 @@ public class Tenant {
     public Tenant() {
     }
 
-    /*
+    /**
      * Parameterized constructor
+     * 
+     * @param name       Name of the tenant
+     * @param tenantId   Tenant ID
+     * @param createdAt  Date when the tenant was created
+     * @param updatedAt  Date when the tenant was updated
      */
-    public Tenant(String name, String tenantId) {
+    public Tenant(String name, String tenantId, String createdAt, String updatedAt) {
         this.name = name;
         this.tenantId = tenantId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

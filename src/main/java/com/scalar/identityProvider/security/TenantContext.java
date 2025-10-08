@@ -1,34 +1,35 @@
 package com.scalar.identityProvider.security;
 
 /**
- * Contexto de tenant para mantener el tenant actual en el hilo de ejecución.
- * Utiliza ThreadLocal para asegurar que cada hilo tenga su propio contexto de tenant.
+ * Tenant context to keep the current tenant in the execution thread.
+ * Use ThreadLocal to ensure that each thread has its own tenant context.
  */
 public class TenantContext {
     
+    // ThreadLocal to hold the current tenant ID for each thread
     private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
     
     /**
-     * Establece el tenant actual para el hilo de ejecución.
+     * Sets the current tenant for the execution thread.
      * 
-     * @param tenantId El ID del tenant
+     * @param tenantId The ID of the tenant to set
      */
     public static void setCurrentTenant(String tenantId) {
         currentTenant.set(tenantId);
     }
     
     /**
-     * Obtiene el tenant actual del hilo de ejecución.
+     * Gets the current tenant of the thread.
      * 
-     * @return El ID del tenant actual
+     * @return The ID of the current tenant
      */
     public static String getCurrentTenant() {
         return currentTenant.get();
     }
     
     /**
-     * Limpia el contexto del tenant para el hilo de ejecución.
-     * Debe llamarse al final de cada request para evitar memory leaks.
+     * Cleans the tenant context for the execution thread.
+     * It must be called at the end of each request to avoid memory leaks.
      */
     public static void clear() {
         currentTenant.remove();

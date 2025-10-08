@@ -5,8 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-/*
+/**
  * Request payload for user login
+ * 
+ * @param username The username of the user.
+ * @param password The password of the user.
+ * @param tenantId The tenant ID where the user wants to authenticate.
  */
 public class LoginRequest {
 

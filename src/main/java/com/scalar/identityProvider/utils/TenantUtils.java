@@ -2,50 +2,52 @@ package com.scalar.identityProvider.utils;
 
 import java.util.Locale;
 
+
 /**
- * Utilidades para manejo de tenants.
+ * Utilities for tenant management.
  */
 public class TenantUtils {
 
     /**
-     * Convierte un nombre de tenant a un tenantId válido.
-     * - Convierte a minúsculas
-     * - Reemplaza espacios con guiones
-     * - Elimina caracteres especiales
-     * - Limita la longitud
+     * Convert a tenant name to a valid tenantId.
+     * - Convert to lowercase
+     * - Replace spaces with hyphens
+     * - Remove special characters
+     * - Limit the length
      *
-     * @param tenantName El nombre del tenant
-     * @return El tenantId generado
+     * @param tenantName The tenant name
+     * @return The tenant generated
      */
     public static String generateTenantId(String tenantName) {
         if (tenantName == null || tenantName.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del tenant no puede estar vacío");
+            throw new IllegalArgumentException("The tenant name cannot be empty.");
         }
 
         return tenantName
-                .toLowerCase(Locale.ROOT)                    // Convertir a minúsculas
-                .trim()                                      // Eliminar espacios al inicio y final
-                .replaceAll("\\s+", "-")                     // Reemplazar espacios con guiones
-                .replaceAll("[^a-z0-9-]", "")                // Eliminar caracteres especiales excepto guiones
-                .replaceAll("-+", "-")                       // Reemplazar múltiples guiones con uno solo
-                .replaceAll("^-|-$", "")                     // Eliminar guiones al inicio y final
-                .substring(0, Math.min(20, tenantName.length())); // Limitar a 20 caracteres
+                .toLowerCase(Locale.ROOT)                    // Convert to lowercase
+                .trim()                                      // Remove spaces at the beginning and end
+                .replaceAll("\\s+", "-")                     // Replace spaces with hyphens
+                .replaceAll("[^a-z0-9-]", "")                // Remove special characters except hyphens
+                .replaceAll("-+", "-")                       // Replace multiple hyphens with a single one
+                .replaceAll("^-|-$", "")                     // Remove hyphens at the beginning and end
+                .substring(0, Math.min(20, tenantName.length())); // Limit to 20 characters
     }
 
+
     /**
-     * Valida si un tenantId es válido.
+     * Validates whether a tenantId is valid.
      *
-     * @param tenantId El tenantId a validar
-     * @return true si es válido, false en caso contrario
+     * @param tenantId The tenantId to validate
+     * @return true if valid, false otherwise
      */
     public static boolean isValidTenantId(String tenantId) {
         if (tenantId == null || tenantId.trim().isEmpty()) {
             return false;
         }
         
-        // Debe contener solo letras minúsculas, números y guiones
-        // No puede empezar o terminar con guión
-        // Debe tener entre 3 y 20 caracteres
+        // It must contain only lowercase letters, numbers, and hyphens.
+        // Cannot start or end with a hyphen
+        // Must be between 3 and 20 characters long
         return tenantId.matches("^[a-z0-9][a-z0-9-]{1,18}[a-z0-9]$");
     }
 }

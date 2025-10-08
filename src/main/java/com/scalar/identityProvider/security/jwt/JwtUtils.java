@@ -1,23 +1,29 @@
 package com.scalar.identityProvider.security.jwt;
 
-import java.security.Key; // Import Key for cryptographic operations
-import java.util.Date; // Import Date for handling date and time
+import com.scalar.identityProvider.security.services.UserDetailsImpl;
+import com.scalar.identityProvider.security.TenantContext;
+import com.scalar.identityProvider.services.TokenBlacklistService;
 
-import org.slf4j.Logger; // Import Logger for logging errors and information
-import org.slf4j.LoggerFactory; // Import LoggerFactory for creating Logger instances
-import org.springframework.beans.factory.annotation.Value; // Import Value for dependency injection
-import org.springframework.security.core.Authentication; // Import Authentication for handling user authentication
-import org.springframework.stereotype.Component; // Import Component for Spring component scanning
-import com.scalar.identityProvider.security.services.UserDetailsImpl; // Import custom user details implementation
-import com.scalar.identityProvider.security.TenantContext; // Import TenantContext for tenant management
-import io.jsonwebtoken.*; // Import the JJWT library classes for handling JWT
-import io.jsonwebtoken.io.Decoders; // Import Decoders for decoding JWT secret
-import io.jsonwebtoken.security.Keys; // Import Keys for creating keys for JWT signing
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.security.Key;
+import java.time.Instant;
+import java.util.Date;
+
 
 /**
  * Utility class for managing JSON Web Tokens (JWT).
  */
-@Component // Indicate that this class is a Spring component
+@Component
 public class JwtUtils {
 
   private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class); // Logger for logging errors
@@ -27,6 +33,10 @@ public class JwtUtils {
 
   @Value("${jwtExpirationMs}") // Inject the JWT expiration time from application properties
   private int jwtExpirationMs;
+
+  @Autowired // Inject TokenBlacklistService for blacklist validation
+  private TokenBlacklistService tokenBlacklistService;
+
 
   /**
    * Generate a JWT token based on the provided authentication.
@@ -52,6 +62,7 @@ public class JwtUtils {
             .compact(); // Compact the JWT into a string
   }
 
+
   /**
    * Create a signing key from the JWT secret.
    *
@@ -61,6 +72,7 @@ public class JwtUtils {
     // Decode the JWT secret and create a signing key
     return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
   }
+
 
   /**
    * Extract the username from the given JWT token.
@@ -74,6 +86,7 @@ public class JwtUtils {
             .parseClaimsJws(token).getBody().getSubject();
   }
 
+
   /**
    * Extract the tenantId from the given JWT token.
    *
@@ -86,6 +99,7 @@ public class JwtUtils {
             .parseClaimsJws(token).getBody().get("tenantId", String.class);
   }
 
+
   /**
    * Validate the given JWT token.
    *
@@ -94,6 +108,12 @@ public class JwtUtils {
    */
   public boolean validateJwtToken(String authToken) {
     try {
+      // Check if token is in blacklist
+      if (tokenBlacklistService.isTokenBlacklisted(authToken)) {
+        logger.error("JWT token is blacklisted");
+        return false;
+      }
+      
       // Parse the token and verify its signature
       Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
       return true; // Token is valid
@@ -108,5 +128,29 @@ public class JwtUtils {
     }
 
     return false; // Token is invalid
+  }
+
+
+  /**
+   * Extract expiration date from JWT token.
+   *
+   * @param token The JWT token.
+   * @return The expiration date as Instant.
+   */
+  public Instant getExpirationFromJwtToken(String token) {
+    return Jwts.parserBuilder().setSigningKey(key()).build()
+            .parseClaimsJws(token).getBody().getExpiration().toInstant();
+  }
+
+  
+  /**
+   * Extract all claims from JWT token.
+   *
+   * @param token The JWT token.
+   * @return The claims from the token.
+   */
+  public Claims getClaimsFromJwtToken(String token) {
+    return Jwts.parserBuilder().setSigningKey(key()).build()
+            .parseClaimsJws(token).getBody();
   }
 }

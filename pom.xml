@@ -39,6 +39,12 @@
 
 	<dependencies>
 
+		<!-- Spring Boot Actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<!-- MongoDB Dependency Support -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -133,7 +139,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.0</version>
+				<version>3.14.1</version>
 				<configuration>
 					<source>25</source>
 					<target>25</target>

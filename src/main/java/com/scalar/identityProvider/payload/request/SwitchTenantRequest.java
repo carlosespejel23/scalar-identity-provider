@@ -6,8 +6,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-/*
+/**
  * Request payload for switching tenant
+ * 
+ * @param tenantId The ID of the tenant to switch to
  */
 public class SwitchTenantRequest {
 
@@ -27,8 +29,10 @@ public class SwitchTenantRequest {
     public SwitchTenantRequest() {
     }
 
-    /*
+    /**
      * Parameterized constructor
+     * 
+     * @param tenantId The ID of the tenant to switch to
      */
     public SwitchTenantRequest(String tenantId) {
         this.tenantId = tenantId;

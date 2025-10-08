@@ -4,50 +4,68 @@ import com.scalar.identityProvider.models.Tenant;
 import com.scalar.identityProvider.models.User;
 import com.scalar.identityProvider.repository.TenantRepository;
 import com.scalar.identityProvider.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
 /**
- * Servicio para manejar operaciones de usuarios relacionadas con tenants.
+ * Service for managing user operations related to tenants.
  */
 @Service
 public class UserTenantService {
 
-    @Autowired
+    /*
+     * Dependencies
+     */
     private UserRepository userRepository;
 
-    @Autowired
     private TenantRepository tenantRepository;
 
     /**
-     * Busca un usuario por username en todos los tenants.
+     * Constructor
+     * 
+     * @param userRepository User repository
+     * @param tenantRepository Tenant repository
+     */
+    public UserTenantService(
+        UserRepository userRepository,
+        TenantRepository tenantRepository) {
+        this.userRepository = userRepository;
+        this.tenantRepository = tenantRepository;
+    }
+
+
+    /**
+     * Search for a user by username in all tenants.
      *
-     * @param username El username del usuario
-     * @return Una lista de usuarios con ese username (puede haber uno por tenant)
+     * @param username The user's username
+     * @return A list of users with that username (there may be one per tenant)
      */
     public List<User> findUsersByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+
     /**
-     * Busca un usuario por username y tenantId.
+     * Search for a user by username and tenantId.
      *
-     * @param username El username del usuario
-     * @param tenantId El ID del tenant
-     * @return Un Optional que contiene el usuario si se encuentra
+     * @param username The user's username
+     * @param tenantId The tenant ID
+     * @return An Optional containing the user if found
      */
     public Optional<User> findUserByUsernameAndTenantId(String username, String tenantId) {
         return userRepository.findByUsernameAndTenantId(username, tenantId);
     }
 
+
     /**
-     * Obtiene todos los tenants donde un usuario tiene cuenta.
+     * Get all tenants where a user has an account.
      *
-     * @param username El username del usuario
-     * @return Lista de tenants donde el usuario tiene cuenta
+     * @param username The user's username
+     * @return List of tenants where the user has an account
      */
     public List<Tenant> getTenantsForUser(String username) {
         List<User> users = findUsersByUsername(username);
@@ -58,12 +76,13 @@ public class UserTenantService {
                 .toList();
     }
 
+
     /**
-     * Verifica si un usuario existe en un tenant específico.
+     * Verify whether a user exists in a specific tenant.
      *
-     * @param username El username del usuario
-     * @param tenantId El ID del tenant
-     * @return true si el usuario existe en ese tenant
+     * @param username The user's username
+     * @param tenantId The tenant ID
+     * @return true if the user exists in that tenant
      */
     public boolean userExistsInTenant(String username, String tenantId) {
         return userRepository.existsByUsernameAndTenantId(username, tenantId);
