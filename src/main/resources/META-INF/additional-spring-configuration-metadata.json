@@ -1,17 +1,22 @@
 {"properties": [
   {
-    "name": "jwtSecret",
+    "name": "jwt.secret",
     "type": "java.lang.String",
     "description": "This is a secret key used for signing and verifying JSON Web Tokens (JWTs)."
   },
   {
-    "name": "jwtExpirationMs",
+    "name": "jwt.expiration.ms",
     "type": "java.lang.String",
     "description": "This is the duration (in milliseconds) for which a JSON Web Token (JWT) remains valid after being issued."
   },
   {
-    "name": "refreshTokenExpirationMs",
+    "name": "jwt.refreshtokenexpiration.ms",
     "type": "java.lang.String",
     "description": "This is the duration (in milliseconds) for which a refresh token remains valid after being issued."
+  },
+  {
+    "name": "app.frontend.url",
+    "type": "java.lang.String",
+    "description": "This is the URL for frontend application."
   }
 ]}

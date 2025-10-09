@@ -24,7 +24,7 @@ public class RefreshTokenService {
      */
     private RefreshTokenRepository refreshTokenRepository;
     
-    @Value("${refreshTokenExpirationMs:2592000000}") // 30 days by default
+    @Value("${jwt.refreshtokenexpiration.ms}") // 30 days by default
     private long refreshTokenExpirationMs;
 
     /**
