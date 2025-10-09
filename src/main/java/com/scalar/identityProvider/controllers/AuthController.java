@@ -142,19 +142,21 @@ public class AuthController {
 					.body(new MessageResponse("error", "User not found in the specified tenant!"));
 		}
 
-		// Verify if the user is active
-		if (!userRepository.isUserActive(loginRequest.getUsername())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("error", "User is not active!"));
-		}
+	// Verify if the user is active
+	User userActive = userRepository.findByUsernameAndActive(loginRequest.getUsername(), true);
+	if (userActive == null) {
+	    return ResponseEntity
+		    .badRequest()
+		    .body(new MessageResponse("error", "User is not active!"));
+	}
 
-		// Verify if the user is active in the specified tenant
-		if (!userRepository.isUserActiveInTenant(loginRequest.getUsername(), loginRequest.getTenantId())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("error", "User is not active in the specified tenant!"));
-		}
+	// Verify if the user is active in the specified tenant
+	User userActiveInTenant = userRepository.findByUsernameAndTenantIdAndActive(loginRequest.getUsername(), loginRequest.getTenantId(), true);
+	if (userActiveInTenant == null) {
+	    return ResponseEntity
+		    .badRequest()
+		    .body(new MessageResponse("error", "User is not active in the specified tenant!"));
+	}
 
 		// Set the tenant context
 		TenantContext.setCurrentTenant(loginRequest.getTenantId());

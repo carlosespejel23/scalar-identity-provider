@@ -87,7 +87,7 @@ public interface UserRepository extends MongoRepository<User, String> {
    * @param tenantId The tenant ID.
    * @return A Boolean indicating whether the user is active (true) or not (false).
    */
-  Boolean isUserActiveInTenant(String username, String tenantId);
+  User findByUsernameAndTenantIdAndActive(String username, String tenantId, boolean active);
 
   /**
    * Check if a user is active
@@ -95,5 +95,5 @@ public interface UserRepository extends MongoRepository<User, String> {
    * @param username The username of the user.
    * @return A Boolean indicating whether the user is active (true) or not (false).
    */
-  Boolean isUserActive(String username);
+  User findByUsernameAndActive(String username, boolean active);
 }
